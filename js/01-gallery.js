@@ -1,26 +1,40 @@
 import { galleryItems } from "./gallery-items.js";
-// Change code below this line
+
 const gallery = document.querySelector(".gallery");
 
 gallery.addEventListener("click", openGallery);
 
 function openGallery(event) {
+  event.preventDefault();
   if (event.target.nodeName !== "IMG") {
     return;
   }
-  event.preventDefault();
+
   const linkToOriginalImage = event.target.dataset.source;
-  console.log(linkToOriginalImage);
-  basicLightbox
-    .create(
-      `
-		<img width="1400" height="900" src="${linkToOriginalImage}">
-	`
-    )
-    .show();
+
+  const instance = basicLightbox.create(
+    `
+	<img width="1400" height="900" src="${linkToOriginalImage}">
+	`,
+    {
+      onClose: (instance) => {
+     
+        window.removeEventListener("keydown", onKeyDown);
+      },
+    }
+  );
+
+  instance.show();
+
+  const onKeyDown = (event) => {
+    if (event.key === "Escape") {
+      instance.close();
+     
+    }
+  };
+  window.addEventListener("keydown", onKeyDown);
 }
 
-// Some helper functions to render gallery items
 console.log(galleryItems);
 createGalleryItems();
 
